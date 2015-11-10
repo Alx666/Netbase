@@ -31,7 +31,7 @@ namespace Netbase.CodeGen
 
         public string MethodCall(RpcMethodInfo hRpc)
         {
-            string sMethodCall = string.Format("m_hMethod.Invoke(hContext.Service, new object[] {{ {0} }})", hRpc.Method.GetParametersString(false));
+            string sMethodCall = string.Format("m_hMethod.Invoke(hService, new object[] {{ {0} }})", hRpc.Method.GetParametersString(false));
 
             if (hRpc.Method.ReturnType == typeof(void))
             {

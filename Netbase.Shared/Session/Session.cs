@@ -114,7 +114,7 @@ namespace Netbase.Shared
         {
             try
             {
-                (hState as IAction).Execute(this);
+                (hState as IAction).Execute(this.Service, this);
             }
             finally
             {

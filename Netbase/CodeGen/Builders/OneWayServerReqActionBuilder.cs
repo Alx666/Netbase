@@ -32,7 +32,7 @@ namespace Netbase.CodeGen
 
         public string MethodCall(RpcMethodInfo hRpc)
         {
-            return string.Format("m_hMethod.Invoke(hContext.Service, new object[] {{ hContext, {0} }});", hRpc.Method.GetParametersString(false));
+            return string.Format("m_hMethod.Invoke(hService, new object[] {{ hContext, {0} }});", hRpc.Method.GetParametersString(false));
         }
 
 

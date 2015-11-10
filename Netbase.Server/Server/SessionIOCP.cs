@@ -9,26 +9,29 @@ namespace Netbase.Server
 {
     public abstract class SessionIOCP : ISession, IDisposable
     {
-        private const int BufferSize = 1024;                    
-        public Socket       Socket                  { get; set; }
-        public ushort       Id                      { get; set; }
-        public IService     Service                 { get; set; }
-        public Interpreter  Interpreter             { get; set; }
+        private const int BufferSize = 1024;        
+                    
+        public Socket           Socket                  { get; set; }
+        public ushort           Id                      { get; set; }
+        public Interpreter      Interpreter             { get; set; }
+        internal IServerIOCP    Service                 { get; set; }
+        internal IServingMode   ServingMode             { get; set; }
 
         private ConcurrentPool<SocketAsyncEventArgs> m_hSendOps;
         private ConcurrentPool<SocketAsyncEventArgs> m_hRecvOps;
 
-        private byte[]               m_hRecvBuffer;
-        private int                  m_iCurrentOffset;
-        private int                  m_iToDataToConsume;
-        private MemoryStream         m_hMs;
-        private BinaryReader         m_hReader;
+        private byte[]                               m_hRecvBuffer;
+        private int                                  m_iCurrentOffset;
+        private int                                  m_iToDataToConsume;
+        private MemoryStream                         m_hMs;
+        private BinaryReader                         m_hReader;
        
+
         public SessionIOCP()
         {
             //TODO: optimize SocketAsyncEventArgs distribution
             m_hSendOps = new ConcurrentPool<SocketAsyncEventArgs>();
-            m_hRecvOps = new ConcurrentPool<SocketAsyncEventArgs>();
+            m_hRecvOps = new ConcurrentPool<SocketAsyncEventArgs>();            
 
             for (int i = 0; i < 10; i++)
             {
@@ -108,12 +111,12 @@ namespace Netbase.Server
 
                     iPacketIndex        += Packet.HeaderSize + uDataSize;
                     m_iToDataToConsume  -= Packet.HeaderSize + uDataSize;
-                    
-                    //hAction.Execute(this); //Garantee Call Order and allow 1op at time
-                    Task.Factory.StartNew(() => Execution(hAction));                    
+
+                    ServingMode.Execute(hAction);             
+                      
+                    m_hRecvBuffer.Reorder(iPacketIndex, ref m_iCurrentOffset);
                 }
 
-                m_hRecvBuffer.Reorder(iPacketIndex, ref m_iCurrentOffset);
                 this.StartRecv();
             }
             catch (Exception)
@@ -143,25 +146,7 @@ namespace Netbase.Server
         private void OnSendCompleted(object hSender, SocketAsyncEventArgs hE)
         {
             m_hSendOps.Recycle(hE);
-        }
-
-        private void Execution(IAction hAction)
-        {
-            try
-            {                
-                hAction.Execute(this);
-            }
-            catch (Exception hEx)
-            {
-                //Todo: error handling
-                Console.WriteLine("Error Executing Action " + hEx);
-            }
-            finally
-            {
-                (hAction as Packet).Recycle();
-            }
-
-        }
+        } 
     }
 
     public static class SomeExtensions
@@ -202,8 +187,5 @@ namespace Netbase.Server
             Array.Clear(hThis, iDataOffset - iCurrentIndex, iDataOffset);
             iDataOffset = 0;
         }
-
-
-
     }
 }

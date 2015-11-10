@@ -10,6 +10,6 @@ namespace Netbase.Shared
     {
         void LoadData(BinaryReader hReader);
         
-        void Execute(ISession hContext);
+        void Execute(IService hService, ISession hContext);
     }
 }

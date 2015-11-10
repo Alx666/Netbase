@@ -12,16 +12,10 @@ namespace Netbase.CodeGen
             return string.Format("using {0};", hService.Pair.Client.Namespace);
         }
 
-        public string MethodInitialization
-        {
-            get { return "m_hMethod = hContext.GetType().GetMethod(m_sMethodName);"; }
-        }
-
         public string MethodInvoke
         {
             get { return @"m_hMethod.Invoke(hContext, new object[] { this });"; }
         }
-
 
         public string Namespace(RpcMethodInfo RpcInfo)
         {

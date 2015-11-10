@@ -42,10 +42,10 @@ namespace Netbase.CodeGen
                             {6}
                         }}
                 
-                        public void Execute(ISession hContext)
+                        public void Execute(IService hService, ISession hContext)
                         {{
                             if(m_hMethod == null)
-                                m_hMethod = hContext.Service.GetType().GetMethod(m_sMethodName);
+                                m_hMethod = hService.GetType().GetMethod(m_sMethodName);
                 
                             
                             {7}

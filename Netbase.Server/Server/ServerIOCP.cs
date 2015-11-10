@@ -11,7 +11,14 @@ using System.Threading;
 //https://thoughtstreams.io/glyph/your-game-doesnt-need-udp-yet/
 namespace Netbase.Server
 {
-    public class ServerIOCP<C> : IService, IDisposable where C : SessionIOCP, new()        
+    internal interface IServerIOCP : IService
+    {
+        void Recycle(SessionIOCP hSession);
+    }
+
+
+
+    public class ServerIOCP<C> : IServerIOCP, IDisposable where C : SessionIOCP, new()        
     {        
         public delegate void ConnectionEventHandler(C hContext);
         public delegate void DisconnectionEventHandler(C hContext, Exception hEx, SocketError eErr);
@@ -100,6 +107,7 @@ namespace Netbase.Server
             hSession.Id            = IdGenerator.Get();
             hSession.Socket        = hSocket;            
             hSession.Service       = this;
+            hSession.ServingMode   = new ServingModeParallel(this, hSession);
             hSession.Interpreter   = Interpreter;
 
             if (m_hClients.TryAdd(hSession.Id, hSession))
@@ -117,8 +125,7 @@ namespace Netbase.Server
         }
 
 
-        //TODO: Derivata del Pool che sa come reciclare i RemoteClientIOCP
-        public void Recycle(ISession hSession)
+        public void Recycle(SessionIOCP hSession)
         {            
             C hRemoved;
             if (m_hClients.TryRemove(hSession.Id, out hRemoved))

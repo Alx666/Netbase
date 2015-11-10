@@ -41,6 +41,9 @@
   <ItemGroup>
     <Compile Include="Containers\IdGenerator.cs" />
     <Compile Include="Server\InterpreterInfo.cs" />
+    <Compile Include="Server\ServingMode\IServingMode.cs" />
+    <Compile Include="Server\ServingMode\ServingModeParallel.cs" />
+    <Compile Include="Server\ServingMode\ServingModeQueue.cs" />
     <Compile Include="Server\SessionIOCP.cs" />
     <Compile Include="Containers\ConcurrentPacketPool.cs" />
     <Compile Include="Containers\ConcurrentPool.cs" />

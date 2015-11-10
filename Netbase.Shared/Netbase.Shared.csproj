@@ -45,7 +45,7 @@
     <Compile Include="Attributes\ServiceContract.cs" />
     <Compile Include="Interfaces\IService.cs" />
     <Compile Include="Interfaces\ISession.cs" />
-    <Compile Include="SessionAsync.cs" />
+    <Compile Include="Session\SessionAsync.cs" />
     <Compile Include="Session\Interpreter.cs" />
     <Compile Include="Interfaces\IAction.cs" />
     <Compile Include="Interfaces\IPacketPool.cs" />
@@ -56,6 +56,7 @@
     <Compile Include="Attributes\NetbasePacket.cs" />
     <Compile Include="Session\Session.cs" />
     <Compile Include="Session\RpcCall.cs" />
+    <Compile Include="Session\SessionNonBlocking.cs" />
     <Compile Include="UI\ConsoleUI.cs" />
     <Compile Include="Deprecated\UnityTypeLoader.cs" />
   </ItemGroup>

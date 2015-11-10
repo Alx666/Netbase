@@ -30,7 +30,7 @@ namespace Netbase
             string sSharedNamespace     = sOutputAssemblyName + ".Protocol";
             string sServiceNamespace    = sOutputAssemblyName + ".Service";
                                     
-            Assembly hToGenerate                    = Assembly.Load(File.ReadAllBytes(sAssemblyFile));
+            Assembly hToGenerate        = Assembly.Load(File.ReadAllBytes(sAssemblyFile));
 
             
             //List<ServiceCodeGen> hServiceContracts  = (from hT in hToGenerate.GetTypes()

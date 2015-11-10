@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9BE7B98C-F4EC-4892-AC45-52212313D081}</ProjectGuid>
+    <ProjectGuid>{54AF2097-58FD-4F94-98FE-0C7C5187E31D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Netbase.Shared</RootNamespace>
@@ -38,9 +38,32 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\DataContract.cs" />
+    <Compile Include="Attributes\RpcType.cs" />
+    <Compile Include="Attributes\ServiceOperation.cs" />
+    <Compile Include="Deprecated\TypeLoader.cs" />
+    <Compile Include="Attributes\ServiceContract.cs" />
+    <Compile Include="Interfaces\IService.cs" />
+    <Compile Include="Interfaces\ISession.cs" />
+    <Compile Include="SessionAsync.cs" />
+    <Compile Include="Session\Interpreter.cs" />
+    <Compile Include="Interfaces\IAction.cs" />
+    <Compile Include="Interfaces\IPacketPool.cs" />
+    <Compile Include="Data\Packet.cs" />
+    <Compile Include="Data\PacketPool.cs" />
+    <Compile Include="Data\Pool.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Attributes\NetbasePacket.cs" />
+    <Compile Include="Session\Session.cs" />
+    <Compile Include="Session\RpcCall.cs" />
+    <Compile Include="UI\ConsoleUI.cs" />
+    <Compile Include="Deprecated\UnityTypeLoader.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

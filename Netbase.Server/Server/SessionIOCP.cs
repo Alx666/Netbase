@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Netbase.Server
 {
+    //xxxx
     public abstract class SessionIOCP : ISession, IDisposable
     {
         private const int BufferSize = 1024;        
@@ -14,6 +15,7 @@ namespace Netbase.Server
         public Socket           Socket                  { get; set; }
         public ushort           Id                      { get; set; }
         public Interpreter      Interpreter             { get; set; }
+
         internal IServerIOCP    Service                 { get; set; }
         internal IServingMode   ServingMode             { get; set; }
 

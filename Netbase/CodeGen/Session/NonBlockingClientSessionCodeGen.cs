@@ -27,44 +27,51 @@ namespace Netbase.CodeGen
             {{                
                 public{1}class {2} : SessionNonBlocking
                 {{
+                    private Pool<RpcCall>               m_hRpcPool;
+                    private Dictionary<ushort, RpcCall> m_hPendingCalls;
+                    private ushort                      m_uCallCounter;
                     
                     {3}
 
                     public {2}()
                     {{
 
-                    }}                    
+                    }}              
+
+                    {4}      
                 }}
             }}
             ",
             this.Service.Namespace,
             IsAbstract ? " abstract " : " ",
             "NonBlocking" + hService.Name,
-            this.PacketRegistration());
+            this.PacketRegistration(),
+            this.WriteRpcMethods());
 
             Code = sResult;
         }
 
-        protected void WriteOneWayMethod(RpcMethodInfo hRpc, StringBuilder hSb)
+        private string WriteRpcMethods()
+        {
+            StringBuilder hSb = new StringBuilder();
+            Service.Pair.Server.Rpcs.Where(hR => hR.Response != null).ToList().ForEach(hM => this.WriteMethod(hM, hSb));
+            Service.Pair.Server.Rpcs.Where(hR => hR.Response == null).ToList().ForEach(hM => this.WriteOneWayMethod(hM, hSb));
+            Service.Pair.Client.Rpcs.ToList().ForEach(hM => this.WriteSessionEvent(hM, hSb));
+            return hSb.ToString();
+        }
+
+        private void WriteOneWayMethod(RpcMethodInfo hRpc, StringBuilder hSb)
         {
             string sResult = string.Format(@" 
                     public void {0}({1})
                     {{
                         {3}     hMsg = null;
                         RpcCall hCall = null; 
-                                            
-                        try
-                        {{
-                            hMsg        = Interpreter.Get<{3}>();
-                            hMsg.Encode({2});      
-
-                            this.Send(hMsg); 
-                        }}
-                        finally
-                        {{
-                            Interpreter.Recycle(hMsg);   
-                            m_hRpcPool.Recycle(hCall);
-                        }}
+                                       
+                        hMsg        = Interpreter.Get<{3}>();
+                        hMsg.Encode({2});      
+                        
+                        this.Send(hMsg);     
                     }}",
                     hRpc.Method.Name,
                     hRpc.Method.GetParametersString(true),
@@ -74,7 +81,7 @@ namespace Netbase.CodeGen
             hSb.AppendLine(sResult);
         }
 
-        protected void WriteMethod(RpcMethodInfo hRpc, StringBuilder hSb)
+        private void WriteMethod(RpcMethodInfo hRpc, StringBuilder hSb)
         {
             string sReturnType = hRpc.Method.ReturnType.AsKeyword();
             string sReturnCode = sReturnType == "void" ? string.Empty : string.Format("return (hCall.Data as {0}).Data;", hRpc.Response.Name);
@@ -84,86 +91,30 @@ namespace Netbase.CodeGen
 
             //TODO: better thread Safety on method calls
             string sResult = string.Format(@" 
-                    public {0} {1}({2})
-                    {{
-                        {5}     hMsg = null;
-                        RpcCall hCall = null; 
-                                            
-                        try
-                        {{
-                            hCall       = m_hRpcPool.Get();             //Todo: incorporare incremento del contatore nel pool dedicato
-                            hCall.Async = false;
-                            hMsg        = Interpreter.Get<{5}>();
-                            hMsg.CallId = m_uCallCounter++;
-                            hMsg.Encode({3});      
-
-                            lock(m_hPendingCalls)
-                            {{
-                                m_hPendingCalls.Add(hMsg.CallId, hCall);
-                            }}
-
-                            this.Send(hMsg); 
-
-                            hCall.Wait();          
-                            {4}             
-                        }}
-                        finally
-                        {{
-                            Interpreter.Recycle(hMsg);   
-                            m_hRpcPool.Recycle(hCall);
-                        }}
-                    }}
-
                     public void {1}({7})
                     {{
                         {5}     hMsg = null;
                         RpcCall hCall = null; 
 
-                        try
-                        {{
-                            hCall       = m_hRpcPool.Get();             //Todo: incorporare incremento del contatore nel pool dedicato
-                            hCall.Async = true;
-                            hCall.Cb    = hCallback;
-                            hMsg        = Interpreter.Get<{5}>();
-                            hMsg.CallId = m_uCallCounter++;
-                            hMsg.Encode({3});      
-
-                            lock(m_hPendingCalls)
-                            {{
-                                m_hPendingCalls.Add(hMsg.CallId, hCall);
-                            }}
-
-                            //TODO: make use of an async send operation, to implement on base session object
-                            this.Send(hMsg);          
-                        }}
-                        finally
-                        {{
-                            Interpreter.Recycle(hMsg);   
-                            m_hRpcPool.Recycle(hCall);
-                        }}
+                        hCall       = m_hRpcPool.Get();             //Todo: incorporare incremento del contatore nel pool dedicato
+                        hCall.Cb    = hCallback;
+                        hMsg        = Interpreter.Get<{5}>();
+                        hMsg.CallId = m_uCallCounter++;
+                        hMsg.Encode({3});      
+                        
+                        m_hPendingCalls.Add(hMsg.CallId, hCall);
+                        
+                        this.Send(hMsg);          
                     }}
                     
                     public void On{1}({6} hResponse)
                     {{
-                        RpcCall hCall;
-
-                        lock(m_hPendingCalls)
-                        {{
-                            hCall = m_hPendingCalls[hResponse.CallId];
-                            m_hPendingCalls.Remove(hResponse.CallId);
-                        }}
-
+                        RpcCall hCall = m_hPendingCalls[hResponse.CallId];
+                        m_hPendingCalls.Remove(hResponse.CallId);
+   
                         hCall.Data = hResponse;
 
-                        if(hCall.Async)
-                        {{
-                            (hCall.Cb as {8}).Invoke({9});
-                        }}
-                        else
-                        {{                            
-                            hCall.Set();
-                        }}
-
+                        (hCall.Cb as {8}).Invoke({9});
                         m_hRpcPool.Recycle(hCall);
                     }}",
                     sReturnType,

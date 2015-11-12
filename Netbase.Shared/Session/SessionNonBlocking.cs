@@ -8,6 +8,7 @@ using System.Threading;
 
 namespace Netbase.Shared
 {
+      
     public class SessionNonBlocking : ISession, IService, IDisposable
     {        
         public event Action Connected;
@@ -20,9 +21,12 @@ namespace Netbase.Shared
         private BinaryReader        m_hReader;
         private byte[]              m_hRecvBuffer;
         private ISessionEvent       m_hEvent;
+        private Queue<Packet>       m_hToSend;
         protected static Interpreter  Interpreter;
-        
 
+        private Packet m_hCurrent;
+        private int m_iSendOffset;
+        private bool m_bRaised;
         static SessionNonBlocking()
         {
             Interpreter = new Interpreter();
@@ -33,17 +37,42 @@ namespace Netbase.Shared
             m_hRecvBuffer   = new byte[1024];
             m_hMs           = new MemoryStream(m_hRecvBuffer);
             m_hReader       = new BinaryReader(m_hMs);
+            m_hToSend       = new Queue<Packet>();
         }
+
 
         public void Update()
         {
             if (m_hEvent != null)
+            {
                 m_hEvent.Raise();
+                m_hEvent = null;
+            }
 
             if (m_hSocket.Connected)
             {
                 try
                 {
+                    SocketError eError = SocketError.Success;
+
+                    while (m_hToSend.Count > 0 && eError != SocketError.WouldBlock)
+                    {
+                        if(m_hCurrent == null)
+                        {
+                            m_hCurrent      = m_hToSend.Dequeue();
+                            m_iSendOffset   = 0;
+                        }
+
+                        int iTotal = m_hCurrent.DataSize + Packet.HeaderSize;
+                        m_iSendOffset += m_hSocket.Send(m_hCurrent.Buffer, m_iSendOffset, iTotal - m_iSendOffset, SocketFlags.None);
+
+                        if (m_iSendOffset == iTotal)
+                        {
+                            m_hCurrent = null;
+                            m_hCurrent.Recycle();
+                        }
+                    }
+
                     byte bPacketId;
                     while(ReceiveAll(this.m_hSocket, m_hRecvBuffer, out bPacketId) != SocketError.WouldBlock)
                     {
@@ -93,7 +122,7 @@ namespace Netbase.Shared
         //TODO: in modalità non di blocco, il metodo Send può risultare completato anche se invia una quantità di byte inferiore al numero di byte presente nel buffer.L'applicazione deve tenere traccia del numero di byte e ritentare l'operazione fino all'invio dei byte nel buffer
         public void Send(Packet hPacket)
         {
-            throw new NotImplementedException();
+            m_hToSend.Enqueue(hPacket);
         }
 
         private static SocketError ReceiveAll(Socket hSocket, byte[] hDataBuffer, out byte bPacketId)
@@ -144,9 +173,7 @@ namespace Netbase.Shared
             public void Raise()
             {
                 if (m_hSession.Connected != null)
-                {
                     m_hSession.Connected();
-                }
             }
         }
 

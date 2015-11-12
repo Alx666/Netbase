@@ -163,7 +163,7 @@ namespace Netbase.CodeGen
                         finally
                         {{
                             Interpreter.Recycle(hMsg);   
-                            m_hRpcPool.Recycle(hCall);
+                            m_hRpcPool.Recycle(hCall); //TODO: possible error?
                         }}
                     }}
                     

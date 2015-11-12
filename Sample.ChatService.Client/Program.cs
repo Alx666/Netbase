@@ -7,7 +7,7 @@ namespace Sample.ChatService.Client
     {
         static void Main(string[] args)
         {
-            using(MyClient hClient = new MyClient())
+            using(MyNonBlockingClient hClient = new MyNonBlockingClient())
             {
                 hClient.Connect("127.0.0.1", 6666);    
                 
@@ -28,13 +28,13 @@ namespace Sample.ChatService.Client
                     }
                     else if (hCommand[0] == "GetVector")
                     {
-                        VeryComplexType hComplex = new VeryComplexType();
-                        hComplex.hData = new ComplexType();
-                        hComplex.hData.somefloat = 777f;
+                        //VeryComplexType hComplex = new VeryComplexType();
+                        //hComplex.hData = new ComplexType();
+                        //hComplex.hData.somefloat = 777f;
                         
 
-                        Vector3 vResult = hClient.GetVector(hComplex);
-                        Console.WriteLine(vResult.x);
+                        //hClient.GetVector(hComplex);
+                        //Console.WriteLine(vResult.x);
                     }
                     else
                     {

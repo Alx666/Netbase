@@ -51,6 +51,7 @@
     <Compile Include="CodeGen\Session\ClientSessionCodeGen.cs" />
     <Compile Include="CodeGen\Server\ServerCodeGen.cs" />
     <Compile Include="CodeGen\ResponseActionCodeGen.cs" />
+    <Compile Include="CodeGen\Session\NonBlockingClientSessionCodeGen.cs" />
     <Compile Include="CodeGen\Session\SessionCodeGen.cs" />
     <Compile Include="CodeGen\TypeExtensions.cs" />
     <Compile Include="Program.cs" />

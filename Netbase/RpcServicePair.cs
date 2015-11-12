@@ -33,6 +33,7 @@ namespace Netbase
             SharedCode.AddRange(Client.Rpcs.Where(hM => hM.Response != null).Select(hM => hM.Response.Code));
             SharedCode.AddRange(Client.Rpcs.Select(hM => hM.RequestAction.Code));
             SharedCode.Add(new ClientSessionCodeGen(Client).Code);
+            SharedCode.Add(new NonBlockingClientSessionCodeGen(Client).Code);
 
             ServiceCode = new List<string>();
             ServiceCode.AddRange(Server.Rpcs.Select(hM => hM.RequestAction.Code));

@@ -20,13 +20,19 @@ namespace Netbase.Shared
         private MemoryStream        m_hMs;
         private BinaryReader        m_hReader;
         private byte[]              m_hRecvBuffer;
-        private ISessionEvent       m_hEvent;
         private Queue<Packet>       m_hToSend;
         protected static Interpreter  Interpreter;
 
         private Packet m_hCurrent;
         private int m_iSendOffset;
-        private bool m_bRaised;
+
+        private ISessionState m_hCurrentState;
+        private ISessionState m_hDisconnected;
+        private ISessionState m_hConnecting;
+        private ISessionState m_hActive;
+
+
+
         static SessionNonBlocking()
         {
             Interpreter = new Interpreter();
@@ -38,16 +44,22 @@ namespace Netbase.Shared
             m_hMs           = new MemoryStream(m_hRecvBuffer);
             m_hReader       = new BinaryReader(m_hMs);
             m_hToSend       = new Queue<Packet>();
+
+            m_hDisconnected = new SessionStateDisconnected(this);
+            m_hConnecting   = new SessionStateConnecting(this);
+            m_hActive       = new SessionStateActive(this);
+
+            m_hDisconnected.Next                          = m_hConnecting;
+            m_hConnecting.Next                            = m_hActive;
+            m_hActive.Next                                = m_hDisconnected;
+
+            m_hCurrentState                             = m_hDisconnected;
         }
 
 
         public void Update()
         {
-            if (m_hEvent != null)
-            {
-                m_hEvent.Raise();
-                m_hEvent = null;
-            }
+            m_hCurrentState = m_hCurrentState.Update();
 
             if (m_hSocket.Connected)
             {
@@ -108,15 +120,23 @@ namespace Netbase.Shared
         public void Connect(string sAddr, int iPort)
         {
             m_hSocket           = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            m_hSocket.BeginConnect(sAddr, iPort, OnEndConnect, m_hSocket);
+            m_hCurrentState     = m_hConnecting;
+            m_hSocket.BeginConnect(sAddr, iPort, OnEndConnect, m_hSocket);            
         }
 
 
         private void OnEndConnect(IAsyncResult hRes)
         {
-            m_hSocket.EndConnect(hRes);            
-            m_hSocket.Blocking = false;
-            m_hEvent = new SessionConnectionEvent(this);           
+            try
+            {
+                m_hSocket.EndConnect(hRes);
+                m_hSocket.Blocking  = false;
+                m_hCurrentState     = m_hActive;
+            }
+            catch (Exception)
+            {
+            }
+            
         }
 
         //TODO: in modalità non di blocco, il metodo Send può risultare completato anche se invia una quantità di byte inferiore al numero di byte presente nel buffer.L'applicazione deve tenere traccia del numero di byte e ritentare l'operazione fino all'invio dei byte nel buffer
@@ -158,25 +178,61 @@ namespace Netbase.Shared
             return eError;
         }
 
-        private interface ISessionEvent
+
+        private interface ISessionState
         {
-            void Raise();
+            ISessionState Update();
+            ISessionState Next { get; set; }
         }
 
-        private class SessionConnectionEvent : ISessionEvent
+        private class SessionStateDisconnected : ISessionState
         {
-            private SessionNonBlocking m_hSession;
-            public SessionConnectionEvent(SessionNonBlocking hSession)
+            private SessionNonBlocking m_hOwner;
+            public ISessionState Next { get; set; }
+
+            public SessionStateDisconnected(SessionNonBlocking hOwner)
             {
-                m_hSession = hSession;
+                m_hOwner = hOwner;
             }
-            public void Raise()
+
+            public ISessionState Update()
             {
-                if (m_hSession.Connected != null)
-                    m_hSession.Connected();
+                return this;
             }
         }
 
+        private class SessionStateConnecting : ISessionState
+        {
+            public ISessionState Next { get; set; }
+            private SessionNonBlocking m_hOwner;
+
+
+            public SessionStateConnecting(SessionNonBlocking hOwner)
+            {
+                m_hOwner = hOwner;
+            }
+
+            public ISessionState Update()
+            {
+                return this;
+            }
+        }
+
+        private class SessionStateActive : ISessionState
+        {
+            public ISessionState Next { get; set; }
+            private SessionNonBlocking m_hOwner;
+        
+            public SessionStateActive(SessionNonBlocking hOwner)
+            {
+                m_hOwner = hOwner;
+            }
+
+            public ISessionState Update()
+            {
+                return this;
+            }
+        }
 
 
     }

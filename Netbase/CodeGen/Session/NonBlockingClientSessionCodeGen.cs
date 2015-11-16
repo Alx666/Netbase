@@ -35,7 +35,8 @@ namespace Netbase.CodeGen
 
                     public {2}()
                     {{
-
+                        m_hRpcPool      = new Pool<RpcCall>();
+                        m_hPendingCalls = new Dictionary<ushort, RpcCall>();
                     }}              
 
                     {4}      

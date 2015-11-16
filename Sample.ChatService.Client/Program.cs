@@ -1,16 +1,24 @@
 ﻿using System;
 using Sample.ChatService.Protocol;
+using System.Threading;
 
 namespace Sample.ChatService.Client
 {
     class Program
     {
+        private static AutoResetEvent m_hEvent = new AutoResetEvent(false);
+
         static void Main(string[] args)
         {
+
             using(MyNonBlockingClient hClient = new MyNonBlockingClient())
             {
-                hClient.Connect("127.0.0.1", 6666);    
+                hClient.Connected += OnConnected;
+                hClient.Disconnected += OnDisconnected;
                 
+                hClient.Connect("127.0.0.1", 6666);
+                m_hEvent.WaitOne();
+
                 while (true)
                 {
                     Console.Write("> ");
@@ -43,5 +51,18 @@ namespace Sample.ChatService.Client
                 }
             }
         }
+
+        private static void OnConnected()
+        {
+            Console.WriteLine("Connected");
+            m_hEvent.Set();
+        }
+
+        private static void OnDisconnected()
+        {
+            Console.WriteLine("Disconnected");
+        }
+
+        
     }
 }

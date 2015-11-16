@@ -23,7 +23,7 @@ namespace Netbase.Shared
         private Queue<Packet>       m_hToSend;
         protected static Interpreter  Interpreter;
 
-        private Packet m_hCurrent;
+        private Packet m_hCurrentPacket;
         private int m_iSendOffset;
 
         private ISessionState                   m_hCurrentState;
@@ -73,6 +73,7 @@ namespace Netbase.Shared
             catch (SocketException)
             {
                 this.Dispose();
+                m_hDisconnected.Update();             //dont wait for next update to fire the disconnection event
                 m_hCurrentState = m_hDisconnected;
             }   
         }
@@ -177,7 +178,7 @@ namespace Netbase.Shared
 
         private class SessionStateJustConnected : ISessionState
         {
-            public ISessionState Next { get; set; }
+            public SessionStateActive Next { get; set; }
 
             private SessionNonBlocking m_hOwner;
 
@@ -191,6 +192,7 @@ namespace Netbase.Shared
                 if (m_hOwner.Connected != null)
                     m_hOwner.Connected();
 
+                Next.Update();
                 return Next;
             }
         }
@@ -230,19 +232,19 @@ namespace Netbase.Shared
 
                 while (m_hOwner.m_hToSend.Count > 0 && eError != SocketError.WouldBlock)
                 {
-                    if (m_hOwner.m_hCurrent == null)
+                    if (m_hOwner.m_hCurrentPacket == null)
                     {
-                        m_hOwner.m_hCurrent = m_hOwner.m_hToSend.Dequeue();
+                        m_hOwner.m_hCurrentPacket = m_hOwner.m_hToSend.Dequeue();
                         m_hOwner.m_iSendOffset = 0;
                     }
 
-                    int iTotal = m_hOwner.m_hCurrent.DataSize + Packet.HeaderSize;
-                    m_hOwner.m_iSendOffset += m_hOwner.m_hSocket.Send(m_hOwner.m_hCurrent.Buffer, m_hOwner.m_iSendOffset, iTotal - m_hOwner.m_iSendOffset, SocketFlags.None);
+                    int iTotal = m_hOwner.m_hCurrentPacket.DataSize + Packet.HeaderSize;
+                    m_hOwner.m_iSendOffset += m_hOwner.m_hSocket.Send(m_hOwner.m_hCurrentPacket.Buffer, m_hOwner.m_iSendOffset, iTotal - m_hOwner.m_iSendOffset, SocketFlags.None, out eError);
 
                     if (m_hOwner.m_iSendOffset == iTotal)
                     {
-                        m_hOwner.m_hCurrent = null;
-                        m_hOwner.m_hCurrent.Recycle();
+                        m_hOwner.m_hCurrentPacket.Recycle();
+                        m_hOwner.m_hCurrentPacket = null;
                     }
                 }
 

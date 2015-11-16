@@ -52,13 +52,9 @@ namespace Netbase.Shared
             m_hActive           = new SessionStateActive(this);
             m_hJustDisconnected = new SessionStateJustDisconnected(this);
 
-            m_hDisconnected.Next            = m_hConnecting;
             m_hJustConnected.Next           = m_hActive;
-            m_hActive.Next                  = m_hJustDisconnected;
             m_hJustDisconnected.Next        = m_hDisconnected;
-
-
-            m_hCurrentState      = m_hDisconnected;
+            m_hCurrentState                 = m_hDisconnected;
         }
 
         public void Dispose()
@@ -84,6 +80,7 @@ namespace Netbase.Shared
         public void Connect(string sAddr, int iPort)
         {
             m_hSocket           = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            m_hCurrentState     = m_hConnecting;
             m_hSocket.BeginConnect(sAddr, iPort, OnEndConnect, m_hSocket);            
         }
 
@@ -151,7 +148,6 @@ namespace Netbase.Shared
         private class SessionStateDisconnected : ISessionState
         {
             private SessionNonBlocking m_hOwner;
-            public ISessionState Next { get; set; }
 
             public SessionStateDisconnected(SessionNonBlocking hOwner)
             {
@@ -160,17 +156,13 @@ namespace Netbase.Shared
 
             public ISessionState Update()
             {
-                if (m_hOwner.m_hSocket != null)
-                    return Next;
-                else
-                    return this;
+                return this;
             }
         }
 
         private class SessionStateConnecting : ISessionState
         {
             private SessionNonBlocking m_hOwner;
-
 
             public SessionStateConnecting(SessionNonBlocking hOwner)
             {
@@ -225,7 +217,6 @@ namespace Netbase.Shared
 
         private class SessionStateActive : ISessionState
         {
-            public ISessionState Next { get; set; }
             private SessionNonBlocking m_hOwner;
         
             public SessionStateActive(SessionNonBlocking hOwner)

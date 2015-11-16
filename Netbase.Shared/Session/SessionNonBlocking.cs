@@ -178,6 +178,7 @@ namespace Netbase.Shared
             return eError;
         }
 
+        #region Nested Types
 
         private interface ISessionState
         {
@@ -234,6 +235,7 @@ namespace Netbase.Shared
             }
         }
 
+        #endregion
 
     }
 }

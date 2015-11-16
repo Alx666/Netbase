@@ -33,7 +33,7 @@ namespace Netbase.CodeGen
         {
             StringBuilder hPacketRegistration = new StringBuilder();
 
-            hPacketRegistration.AppendFormat("static {0}(){1}", Service.Name, Environment.NewLine);
+            hPacketRegistration.AppendFormat("static {0}(){1}", this.Name(), Environment.NewLine);
             hPacketRegistration.AppendLine("                    {");
 
             foreach (RpcMethodInfo hMethod in Service.Pair.Server.Rpcs)
@@ -65,7 +65,7 @@ namespace Netbase.CodeGen
 
         protected override string Name()
         {
-            return Service.Name;
+            return "Concurrent" + Service.Name;
         }
 
         protected override string WriteRpcMethods()

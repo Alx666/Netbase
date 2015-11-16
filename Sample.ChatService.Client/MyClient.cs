@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace Sample.ChatService.Client
 {
-    internal class MyClient : ChatSession
+    internal class MyClient : ConcurrentChatSession
     {
         public override void OnForwardMessage(string sSender, string sMessage)
         {

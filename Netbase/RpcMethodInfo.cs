@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using Netbase.CodeGen;
+using System.Runtime.Serialization;
 
 namespace Netbase
 {                                                     
@@ -23,6 +24,9 @@ namespace Netbase
         {
             Method      = hMethod;
             Attribute   = hMethod.GetCustomAttribute<ServiceOperation>();
+            if (Attribute == null)
+                throw new MissingAttributeException("Missing ServiceOperation Attribute on Method " + hMethod.Name);
+
             Service     = hService;
 
             if (Attribute.Type == RpcType.OneWay && hMethod.ReturnType != typeof(void))
@@ -58,5 +62,25 @@ namespace Netbase
         }
 
 
+    }
+
+    
+    internal class MissingAttributeException : Exception
+    {
+        public MissingAttributeException()
+        {
+        }
+
+        public MissingAttributeException(string message) : base(message)
+        {
+        }
+
+        public MissingAttributeException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected MissingAttributeException(SerializationInfo info, StreamingContext context) : base(info, context)
+        {
+        }
     }
 }

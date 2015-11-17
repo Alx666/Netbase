@@ -32,7 +32,6 @@ namespace Netbase
                                     
             Assembly hToGenerate        = Assembly.Load(File.ReadAllBytes(sAssemblyFile));
 
-            
             //List<ServiceCodeGen> hServiceContracts  = (from hT in hToGenerate.GetTypes()
             //                                           from hA in hT.GetCustomAttributes<ServiceContract>(false)
             //                                           select new ServiceCodeGen(hT, hA, sSharedNamespace, sServiceNamespace)).ToList();
@@ -44,8 +43,8 @@ namespace Netbase
                                         select new RpcServicePair(sServiceNamespace, sSharedNamespace, hA, hA.Service.GetCustomAttribute<CallbackContract>())).Single();
 
                 IEnumerable<Type> hTypesToEncode = from hT in hToGenerate.GetTypes()
-                                    from hA in hT.GetCustomAttributes<DataContract>(false)
-                                    select hT;
+                                                   from hA in hT.GetCustomAttributes<DataContract>(false)
+                                                   select hT;
 
                 TypeEncoderCodeGen hEncoders = new TypeEncoderCodeGen(sSharedNamespace, hTypesToEncode.ToList());
 
@@ -60,6 +59,10 @@ namespace Netbase
 
                 hResult = BuildServerAssembly(hResult.CompiledAssembly, sServiceNamespace + ".dll", "v4.0", hPair.ServiceCode.ToArray());
                 DumpOutput(hResult);
+            }
+            catch (MissingAttributeException hEx)
+            {
+                Console.WriteLine(hEx.Message);
             }
             catch (Exception hEx)
             {

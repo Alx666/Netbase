@@ -17,10 +17,9 @@ namespace Test.NonBlocking.Client
             m_hThread.Start();
         }
 
-
-        public override string OnForwardTestMessage(string sMessage)
+        public override string OnRecurringClient(string sMessage)
         {
-            return null;
+            return "";
         }
 
         private void ThreadRoutine()
@@ -74,9 +73,24 @@ namespace Test.NonBlocking.Client
                 string sText = RandomStrings("qwertyuiopasdfghjklzxcvbnm", iMin, iMax, 1, hRand).First();
                 SentHash = sText.GetHashCode();
                 Console.Write(SentHash + "\t\t=>\t\t");
-                m_hClient.TestMessage(sText, OnTestMessage);
+                m_hClient.Echo(sText, OnTestDataIntegrity);
                 m_hEvent.WaitOne();
             }
+
+            //Test Big Data
+            //TODO: need support for PacketSize
+
+            //Test Recurring Calls
+            Console.WriteLine("Testing Recurring Calls...");
+            Console.Write("Enter Text> ");
+            string sInput = Console.ReadLine();
+
+            m_hClient.RecurringServer(sInput, OnRecurringText);
+            m_hEvent.WaitOne();
+
+            //Test Calls Ordering
+
+
 
 
             Console.WriteLine("Press Any Key To Exit");
@@ -91,7 +105,7 @@ namespace Test.NonBlocking.Client
 
         private static int SentHash;
         private static int RecvHash;
-        private static void OnTestMessage(string sCb)
+        private static void OnTestDataIntegrity(string sCb)
         {
             RecvHash = sCb.GetHashCode();
             Console.Write(RecvHash + "...");
@@ -122,6 +136,12 @@ namespace Test.NonBlocking.Client
                 m_hClient.Close();
             else
                 m_hEvent.Set();
+        }
+
+        private static void OnRecurringText(string sRet)
+        {
+            Console.WriteLine(sRet + " Passed!");
+            m_hEvent.Set();
         }
 
 

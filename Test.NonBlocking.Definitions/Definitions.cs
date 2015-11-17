@@ -10,13 +10,16 @@ namespace Test.NonBlocking.Definitions
     public interface ITestService
     {
         [ServiceOperation]
-        string TestMessage(string sMessage);
+        string Echo(string sMessage);
+
+        [ServiceOperation]
+        string RecurringServer(string sMessage);
     }
 
     [CallbackContract("TestCallback", typeof(ITestService))]
     public interface ITestCallback
     {
         [ServiceOperation]
-        string ForwardTestMessage(string sMessage);
+        string RecurringClient(string sMessage);
     }
 }

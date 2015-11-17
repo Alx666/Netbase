@@ -83,6 +83,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.LongCalls.Client", "Te
 		{11347AD5-1505-45F8-B7D0-33F958E1F811} = {11347AD5-1505-45F8-B7D0-33F958E1F811}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.NonBlocking.Definitions", "Test.NonBlocking.Definitions\Test.NonBlocking.Definitions.csproj", "{7C7D95E1-82C6-4AF6-B14B-E67ED4FF3774}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -149,6 +151,10 @@ Global
 		{955BCDB8-B023-4073-B3E1-6B1CB9A10E46}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{955BCDB8-B023-4073-B3E1-6B1CB9A10E46}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{955BCDB8-B023-4073-B3E1-6B1CB9A10E46}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C7D95E1-82C6-4AF6-B14B-E67ED4FF3774}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C7D95E1-82C6-4AF6-B14B-E67ED4FF3774}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C7D95E1-82C6-4AF6-B14B-E67ED4FF3774}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C7D95E1-82C6-4AF6-B14B-E67ED4FF3774}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

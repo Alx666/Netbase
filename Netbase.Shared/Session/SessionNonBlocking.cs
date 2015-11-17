@@ -99,8 +99,7 @@ namespace Netbase.Shared
                 m_hCurrentState     = m_hJustDisconnected;
             }            
         }
-
-        //TODO: in modalità non di blocco, il metodo Send può risultare completato anche se invia una quantità di byte inferiore al numero di byte presente nel buffer.L'applicazione deve tenere traccia del numero di byte e ritentare l'operazione fino all'invio dei byte nel buffer
+        
         public void Send(Packet hPacket)
         {
             m_hToSend.Enqueue(hPacket);

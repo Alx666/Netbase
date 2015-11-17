@@ -19,7 +19,7 @@ namespace Sample.ChatService.Definitions
         [ServiceOperation]
         Vector3 GetVector(VeryComplexType hComplex);
     }
-
+    //Prova GITHub Commit!!!
     [CallbackContract("ChatSession", typeof(IChatService))]
     public interface IChatSession
     {

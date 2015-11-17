@@ -2,6 +2,7 @@
 
 //Todo: overload delle operazioni non supportato
 //Todo: operazioni con lo stesso nome nello stesso assembly non supportate, creare un namespace nested x ogni coppia di servizi
+//Todo: task di prova
 namespace Sample.ChatService.Definitions
 {
     [ServiceContract("ChatService", typeof(IChatSession))]

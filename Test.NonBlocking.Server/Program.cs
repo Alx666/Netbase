@@ -15,7 +15,8 @@ namespace Test.NonBlocking.Server
     {
         public override string TestMessage(Context hContext, string sMessage)
         {
-            return null;
+            Console.WriteLine(sMessage.GetHashCode());
+            return sMessage;
         }
     }
 

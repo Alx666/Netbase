@@ -91,8 +91,11 @@ namespace Netbase.Server
         {                        
             try
             {
-                if(hE.IsDisconnect())
+                if (hE.IsDisconnect())
+                {
+                    m_hRecvOps.Recycle(hE);
                     throw new SocketException();
+                }
 
                 //Begin another Receive Operation
                 m_iToDataToConsume += hE.CopyTo(m_hRecvBuffer, ref m_iCurrentOffset); //Warning: race condition with next call
@@ -122,7 +125,7 @@ namespace Netbase.Server
                 this.StartRecv();
             }
             catch (Exception)
-            {
+            {                
                 Service.Recycle(this);
             }
         }

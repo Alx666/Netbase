@@ -3,6 +3,7 @@
 //Todo: overload delle operazioni non supportato
 //Todo: operazioni con lo stesso nome nello stesso assembly non supportate, creare un namespace nested x ogni coppia di servizi
 //Todo: task di prova
+//Todo: task di prova2
 namespace Sample.ChatService.Definitions
 {
     [ServiceContract("ChatService", typeof(IChatSession))]
@@ -20,7 +21,10 @@ namespace Sample.ChatService.Definitions
         [ServiceOperation]
         Vector3 GetVector(VeryComplexType hComplex);
     }
-    //Prova GITHub Commit!!!
+
+    //Todo: task di prova2
+    //Todo: task di prova2
+    //Todo: task di prova2
     [CallbackContract("ChatSession", typeof(IChatService))]
     public interface IChatSession
     {

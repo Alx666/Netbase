@@ -59,9 +59,12 @@ namespace Netbase.Shared
 
         public void Dispose()
         {
-            m_hSocket.Shutdown(SocketShutdown.Both);
-            m_hSocket.Close();
-            m_hSocket = null;
+            if (m_hSocket != null)
+            {
+                m_hSocket.Shutdown(SocketShutdown.Both);
+                m_hSocket.Close();
+                m_hSocket = null;
+            }
         }
 
         public void Update()
@@ -70,11 +73,10 @@ namespace Netbase.Shared
             {
                 m_hCurrentState = m_hCurrentState.Update();
             }
-            catch (SocketException)
+            catch (Exception)
             {
                 this.Dispose();
-                m_hDisconnected.Update();             //dont wait for next update to fire the disconnection event
-                m_hCurrentState = m_hDisconnected;
+                m_hCurrentState = m_hJustDisconnected;
             }   
         }
 
@@ -191,7 +193,6 @@ namespace Netbase.Shared
                 if (m_hOwner.Connected != null)
                     m_hOwner.Connected();
 
-                Next.Update();
                 return Next;
             }
         }

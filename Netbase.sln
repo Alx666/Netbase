@@ -85,6 +85,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.LongCalls.Client", "Te
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.NonBlocking.Definitions", "Test.NonBlocking.Definitions\Test.NonBlocking.Definitions.csproj", "{7C7D95E1-82C6-4AF6-B14B-E67ED4FF3774}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.NonBlocking.Server", "Test.NonBlocking.Server\Test.NonBlocking.Server.csproj", "{06897068-DDC7-43AF-B14A-8B01025BEFB1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test.NonBlocking.Client", "Test.NonBlocking.Client\Test.NonBlocking.Client.csproj", "{30E1D065-7087-4499-90A3-97EA279C748C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -155,6 +159,14 @@ Global
 		{7C7D95E1-82C6-4AF6-B14B-E67ED4FF3774}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C7D95E1-82C6-4AF6-B14B-E67ED4FF3774}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C7D95E1-82C6-4AF6-B14B-E67ED4FF3774}.Release|Any CPU.Build.0 = Release|Any CPU
+		{06897068-DDC7-43AF-B14A-8B01025BEFB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{06897068-DDC7-43AF-B14A-8B01025BEFB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{06897068-DDC7-43AF-B14A-8B01025BEFB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{06897068-DDC7-43AF-B14A-8B01025BEFB1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30E1D065-7087-4499-90A3-97EA279C748C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30E1D065-7087-4499-90A3-97EA279C748C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30E1D065-7087-4499-90A3-97EA279C748C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30E1D065-7087-4499-90A3-97EA279C748C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

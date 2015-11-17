@@ -24,6 +24,7 @@ namespace Sample.ChatService.Definitions
     [CallbackContract("ChatSession", typeof(IChatService))]
     public interface IChatSession
     {
+        //isjhrhgerdiohjrieuhg
         [ServiceOperation(RpcType.OneWay)]
         void ForwardMessage(string sSender, string sMessage);
     }

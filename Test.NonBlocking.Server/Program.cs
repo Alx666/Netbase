@@ -19,9 +19,12 @@ namespace Test.NonBlocking.Server
             return sMessage;
         }
 
-        public override string RecurringServer(Context hContext, string sMessage)
+        public override string RecurringServer(Context hContext, string sMessage, int iCount)
         {
-            return null;
+            if (iCount == 0)
+                return sMessage;
+            else
+                return hContext.RecurringClient(sMessage + iCount.ToString(), --iCount);
         }
     }
 

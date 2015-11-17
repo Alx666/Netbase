@@ -10,17 +10,36 @@ namespace Test.NonBlocking.Client
     internal class Client : NonBlockingTestCallback
     {
         private Thread m_hThread;
+        private AutoResetEvent m_hEvent;
+        private string m_sMessage;
 
         public Client()
         {
             m_hThread = new Thread(ThreadRoutine);
+            m_hEvent = new AutoResetEvent(false);
             m_hThread.Start();
         }
-
-        public override string OnRecurringClient(string sMessage)
+        
+        public override string OnRecurringClient(string sMessage, int iCount)
         {
-            return "";
+            if (iCount == 0)
+                return sMessage;
+            else
+            {
+                this.RecurringServer(sMessage + iCount.ToString(), --iCount, OnCallEnd);
+                m_hEvent.WaitOne();
+                return m_sMessage;
+            }
         }
+
+        
+        private void OnCallEnd(string obj)
+        {
+            m_sMessage = obj;
+            m_hEvent.Set();
+        }
+
+
 
         private void ThreadRoutine()
         {
@@ -46,7 +65,7 @@ namespace Test.NonBlocking.Client
             m_hClient.Disconnected  += OnDisconnect;
 
 
-            //Test Connect/Disconnect
+            //Test: Connect/Disconnect
             m_hClient.Connected     += OnConnect;
             Console.Write("Testing Connect/Disconnect...");
             OnDisconnect();
@@ -57,7 +76,7 @@ namespace Test.NonBlocking.Client
             Console.WriteLine();
 
 
-            //Test Data Integrity
+            //Test: Data Integrity
             Console.WriteLine("Testing Rpc Data Integrity...");
             Console.Write("Min String Size> ");
             int iMin = int.Parse(Console.ReadLine());
@@ -77,18 +96,18 @@ namespace Test.NonBlocking.Client
                 m_hEvent.WaitOne();
             }
 
-            //Test Big Data
+            //Test: Big Data
             //TODO: need support for PacketSize
 
-            //Test Recurring Calls
-            Console.WriteLine("Testing Recurring Calls...");
-            Console.Write("Enter Text> ");
-            string sInput = Console.ReadLine();
+            //Test: Recurring Calls
+            //TODO Recurring Calls for NonBlocking Session
+            //Console.WriteLine("Testing Recurring Calls...");
+            //Console.Write("Enter Text> ");
+            //string sInput = Console.ReadLine();
+            //m_hClient.RecurringServer(sInput, 10, OnRecurringText);
+            //m_hEvent.WaitOne();
 
-            m_hClient.RecurringServer(sInput, OnRecurringText);
-            m_hEvent.WaitOne();
-
-            //Test Calls Ordering
+            //Test: Calls Ordering
 
 
 

@@ -320,8 +320,9 @@ namespace Netbase.Shared
 
                     return this;
                 }
-                catch (Exception)
+                catch (Exception hEx)
                 {
+                    Console.WriteLine(hEx);
                     return Fail;
                 }                
             }

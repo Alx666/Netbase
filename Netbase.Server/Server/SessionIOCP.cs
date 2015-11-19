@@ -124,8 +124,9 @@ namespace Netbase.Server
 
                 this.StartRecv();
             }
-            catch (Exception)
-            {                
+            catch (Exception hEx)
+            {
+                Console.WriteLine(hEx.Message);
                 Service.Recycle(this);
             }
         }

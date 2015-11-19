@@ -6,5 +6,7 @@ namespace Netbase.CodeGen
         string UsingNamespace(RpcService hService);
         string MethodInvoke { get; }
         string Namespace(RpcMethodInfo RpcInfo);
+
+        string MethodInit { get; }
     }
 }

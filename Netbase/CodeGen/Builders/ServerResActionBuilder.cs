@@ -21,5 +21,10 @@ namespace Netbase.CodeGen
         {
             return string.Format("{0}", hRpcInfo.Service.Pair.Client.Namespace);
         }
+
+        public string MethodInit
+        {
+            get { return "m_hMethod = hService.GetType().GetMethod(m_sMethodName);"; }
+        }
     }
 }

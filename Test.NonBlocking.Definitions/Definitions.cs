@@ -14,17 +14,11 @@ namespace Test.NonBlocking.Definitions
 
         [ServiceOperation]
         void BeginTestCallbacks();
-
-        [ServiceOperation]
-        void RecurringServer(int iCount);
     }
 
     [CallbackContract("TestCallback", typeof(ITestService))]
     public interface ITestCallback
     {
-        [ServiceOperation]
-        void RecurringClient(int iCount);
-
         [ServiceOperation]
         string GetRandomString();
     }

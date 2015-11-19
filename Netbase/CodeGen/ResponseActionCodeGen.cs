@@ -25,7 +25,7 @@ namespace Netbase.CodeGen
                 
                 namespace {1}
                 {{
-                    //{6}
+                    //{7}
                     public class {2} : {3}, IAction
                     {{                  
                         private const string      m_sMethodName = ""On{5}"";
@@ -34,7 +34,7 @@ namespace Netbase.CodeGen
                         public void Execute(IService hService, ISession hContext)
                         {{
                             if(m_hMethod == null)
-                                m_hMethod = hService.GetType().GetMethod(m_sMethodName);
+                                {6}
                             
                             {4}
                         }}
@@ -47,6 +47,7 @@ namespace Netbase.CodeGen
                 RpcInfo.Response.Name,
                 hBuilder.MethodInvoke,
                 RpcInfo.Method.Name,
+                hBuilder.MethodInit,
                 "Generated With: " + hBuilder.GetType().Name);
 
             Code = sResult;

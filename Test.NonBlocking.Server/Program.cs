@@ -28,14 +28,6 @@ namespace Test.NonBlocking.Server
             Console.WriteLine(sMessage.GetHashCode());
             return sMessage;
         }
-
-        public override void RecurringServer(Context hContext, int iCount)
-        {
-            if (iCount == 0)
-                return;
-            else
-                hContext.RecurringClient(--iCount);
-        }
     }
 
 

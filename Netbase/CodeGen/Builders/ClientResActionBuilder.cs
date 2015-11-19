@@ -17,6 +17,11 @@ namespace Netbase.CodeGen
             get { return @"m_hMethod.Invoke(hContext, new object[] { this });"; }
         }
 
+        public string MethodInit
+        {
+            get { return "m_hMethod = hContext.GetType().GetMethod(m_sMethodName);"; }
+        }
+
         public string Namespace(RpcMethodInfo RpcInfo)
         {
             return RpcInfo.Service.Pair.Server.Namespace;

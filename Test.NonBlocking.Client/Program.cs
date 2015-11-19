@@ -20,17 +20,7 @@ namespace Test.NonBlocking.Client
         public override string OnGetRandomString()
         {
             return Program.RandomStrings("abcdefghilmnopqrstuvz1234567890", 1, 50, 1, new Random()).First();
-        }
-
-        public override void OnRecurringClient(int iCount)
-        {
-            if (iCount == 0)
-                return;
-            else
-                this.RecurringServer(iCount, () => { });
-        }
-
-        
+        } 
 
         private void ThreadRoutine()
         {
@@ -53,17 +43,20 @@ namespace Test.NonBlocking.Client
             Connections = int.Parse(Console.ReadLine());
 
             m_hClient = new Client();
-            m_hClient.Disconnected  += OnDisconnect;
 
 
             //Test: Connect/Disconnect
             m_hClient.Connected     += OnConnect;
+            m_hClient.Disconnected  += OnDisconnectTest;
             Console.Write("Testing Connect/Disconnect...");
-            OnDisconnect();
+            OnDisconnectTest();
             m_hEvent.WaitOne();
             Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Passed!");
             Console.ForegroundColor = ConsoleColor.Gray;
+            m_hClient.Connected     -= OnConnect;
+            m_hClient.Disconnected  -= OnDisconnectTest;
+            m_hClient.Disconnected  += OnDisconnect;
             Console.WriteLine();
 
 
@@ -76,7 +69,7 @@ namespace Test.NonBlocking.Client
             Console.Write("String Count> ");
             int iCount = int.Parse(Console.ReadLine());
 
-            m_hClient.Connected -= OnConnect;            
+
             Random hRand = new Random();
             for (int i = 0; i < iCount; i++)
             {
@@ -114,7 +107,7 @@ namespace Test.NonBlocking.Client
             Console.ReadLine();
         }
 
-        private static void OnDisconnect()
+        private static void OnDisconnectTest()
         {
             if(Connections > 0)
                 m_hClient.Connect("127.0.0.1", 28000);
@@ -162,7 +155,10 @@ namespace Test.NonBlocking.Client
         }
 
 
-
+        private static void OnDisconnect()
+        {
+            Console.WriteLine("Disconnected");
+        }
 
 
         public static IEnumerable<string> RandomStrings(string allowedChars, int minLength, int maxLength, int count, Random rng)

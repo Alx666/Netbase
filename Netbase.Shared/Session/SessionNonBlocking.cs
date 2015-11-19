@@ -9,7 +9,7 @@ using System.Threading;
 namespace Netbase.Shared
 {
       
-    public class SessionNonBlocking : ISession, IService
+    public class SessionNonBlocking : ISession, IService, IDisposable
     {        
         public event Action Connected;
         public event Action Disconnected;
@@ -59,6 +59,11 @@ namespace Netbase.Shared
             m_hJustDisconnected.Next        = m_hDisconnected;
             m_hActive.Fail                  = m_hJustDisconnected;
             m_hCurrentState                 = m_hDisconnected;
+        }
+
+        public void Dispose()
+        {
+            this.Close();
         }
 
         public void Close()

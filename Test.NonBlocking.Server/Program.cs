@@ -13,18 +13,28 @@ namespace Test.NonBlocking.Server
 
     internal class Server : TestService<Context>
     {
+        public override void BeginTestCallbacks(Context hContext)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Console.WriteLine(hContext.GetRandomString());
+            }
+
+            hContext.GetRandomString((s) => { Console.WriteLine(s); });
+        }
+
         public override string Echo(Context hContext, string sMessage)
         {
             Console.WriteLine(sMessage.GetHashCode());
             return sMessage;
         }
 
-        public override string RecurringServer(Context hContext, string sMessage, int iCount)
+        public override void RecurringServer(Context hContext, int iCount)
         {
             if (iCount == 0)
-                return sMessage;
+                return;
             else
-                return hContext.RecurringClient(sMessage + iCount.ToString(), --iCount);
+                hContext.RecurringClient(--iCount);
         }
     }
 

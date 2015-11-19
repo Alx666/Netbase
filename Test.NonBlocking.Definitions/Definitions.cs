@@ -13,13 +13,19 @@ namespace Test.NonBlocking.Definitions
         string Echo(string sMessage);
 
         [ServiceOperation]
-        string RecurringServer(string sMessage, int iCount);
+        void BeginTestCallbacks();
+
+        [ServiceOperation]
+        void RecurringServer(int iCount);
     }
 
     [CallbackContract("TestCallback", typeof(ITestService))]
     public interface ITestCallback
     {
         [ServiceOperation]
-        string RecurringClient(string sMessage, int iCount);
+        void RecurringClient(int iCount);
+
+        [ServiceOperation]
+        string GetRandomString();
     }
 }

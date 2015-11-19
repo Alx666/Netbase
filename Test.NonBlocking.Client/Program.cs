@@ -10,36 +10,27 @@ namespace Test.NonBlocking.Client
     internal class Client : NonBlockingTestCallback
     {
         private Thread m_hThread;
-        private AutoResetEvent m_hEvent;
-        private string m_sMessage;
 
         public Client()
         {
             m_hThread = new Thread(ThreadRoutine);
-            m_hEvent = new AutoResetEvent(false);
             m_hThread.Start();
         }
-        
-        public override string OnRecurringClient(string sMessage, int iCount)
+
+        public override string OnGetRandomString()
+        {
+            return Program.RandomStrings("abcdefghilmnopqrstuvz1234567890", 1, 50, 1, new Random()).First();
+        }
+
+        public override void OnRecurringClient(int iCount)
         {
             if (iCount == 0)
-                return sMessage;
+                return;
             else
-            {
-                this.RecurringServer(sMessage + iCount.ToString(), --iCount, OnCallEnd);
-                m_hEvent.WaitOne();
-                return m_sMessage;
-            }
+                this.RecurringServer(iCount, () => { });
         }
 
         
-        private void OnCallEnd(string obj)
-        {
-            m_sMessage = obj;
-            m_hEvent.Set();
-        }
-
-
 
         private void ThreadRoutine()
         {
@@ -96,15 +87,22 @@ namespace Test.NonBlocking.Client
                 m_hEvent.WaitOne();
             }
 
+
+            //Test: CallbackService
+            Console.WriteLine("Testing Callback Calls...");
+            m_hClient.BeginTestCallbacks(() => { m_hEvent.Set(); });
+            m_hEvent.WaitOne();
+            Console.WriteLine("Passed!");
+            
             //Test: Big Data
             //TODO: need support for PacketSize
 
             //Test: Recurring Calls
             //TODO Recurring Calls for NonBlocking Session
             //Console.WriteLine("Testing Recurring Calls...");
-            //Console.Write("Enter Text> ");
-            //string sInput = Console.ReadLine();
-            //m_hClient.RecurringServer(sInput, 10, OnRecurringText);
+            //Console.Write("Enter Recursions Count> ");
+            //int iInput = int.Parse(Console.ReadLine());
+            //m_hClient.RecurringServer(iInput, OnRecusionTest);
             //m_hEvent.WaitOne();
 
             //Test: Calls Ordering
@@ -157,9 +155,9 @@ namespace Test.NonBlocking.Client
                 m_hEvent.Set();
         }
 
-        private static void OnRecurringText(string sRet)
+        private static void OnRecusionTest()
         {
-            Console.WriteLine(sRet + " Passed!");
+            Console.WriteLine(" Passed!");
             m_hEvent.Set();
         }
 
@@ -167,7 +165,7 @@ namespace Test.NonBlocking.Client
 
 
 
-        private static IEnumerable<string> RandomStrings(string allowedChars, int minLength, int maxLength, int count, Random rng)
+        public static IEnumerable<string> RandomStrings(string allowedChars, int minLength, int maxLength, int count, Random rng)
         {
             char[] chars = new char[maxLength];
             int setLength = allowedChars.Length;

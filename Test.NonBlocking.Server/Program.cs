@@ -17,15 +17,14 @@ namespace Test.NonBlocking.Server
         {
             for (int i = 0; i < 10; i++)
             {
-                Console.WriteLine(hContext.GetRandomString());
+                hContext.GetRandomString();
             }
 
-            hContext.GetRandomString((s) => { Console.WriteLine(s); });
+            hContext.GetRandomString((s) => { });
         }
 
         public override string Echo(Context hContext, string sMessage)
         {
-            Console.WriteLine(sMessage.GetHashCode());
             return sMessage;
         }
     }

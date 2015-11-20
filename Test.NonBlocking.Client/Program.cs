@@ -52,7 +52,7 @@ namespace Test.NonBlocking.Client
             OnDisconnectTest();
             m_hEvent.WaitOne();
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Passed!");
+            Console.WriteLine("\t\t\t\tPassed!");
             Console.ForegroundColor = ConsoleColor.Gray;
             m_hClient.Connected     -= OnConnect;
             m_hClient.Disconnected  -= OnDisconnectTest;
@@ -82,11 +82,15 @@ namespace Test.NonBlocking.Client
 
 
             //Test: CallbackService
-            Console.WriteLine("Testing Callback Calls...");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.Write("Testing Callback Calls...");
             m_hClient.BeginTestCallbacks(() => { m_hEvent.Set(); });
             m_hEvent.WaitOne();
-            Console.WriteLine("Passed!");
-            
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("\t\t\t\tPassed!");
+            Console.ForegroundColor = ConsoleColor.Gray;
+
             //Test: Big Data
             //TODO: need support for PacketSize
 

@@ -324,7 +324,7 @@ namespace Netbase.Shared
                 }
                 catch (Exception hEx)
                 {
-                    Console.WriteLine(hEx);
+                    //Console.WriteLine(hEx);
                     return Fail;
                 }                
             }

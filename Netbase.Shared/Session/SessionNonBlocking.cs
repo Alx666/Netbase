@@ -297,7 +297,9 @@ namespace Netbase.Shared
 
                         if (m_hOwner.m_iSendOffset == iTotal)
                         {
-                            m_hOwner.m_hCurrentPacket.Recycle();
+                            if(m_hOwner.m_hCurrentPacket.Pool != null)
+                                m_hOwner.m_hCurrentPacket.Recycle();
+
                             m_hOwner.m_hCurrentPacket = null;
                         }
                     }

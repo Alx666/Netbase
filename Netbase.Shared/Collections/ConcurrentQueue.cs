@@ -7,36 +7,14 @@ using System.Threading;
 
 namespace Netbase.Shared.Collections
 {
-
-    public class ConcurrentQueue<T>
+    public class ConcurrentQueue<T> : ConcurrentContainer
     {
-        private Queue<T> m_hQueue;
-        private int m_iTokenCounter;
-        private int m_iServedToken;
+        private Queue<T>    m_hQueue;
 
-        public ConcurrentQueue()
+        public ConcurrentQueue() : base()
         {
             m_hQueue        = new Queue<T>();
-            m_iServedToken  = m_iTokenCounter + 1;
         }
-
-        private void SpinWaitFor(Action hAction)
-        {
-            //Get an access token
-            int iThreadToken = Interlocked.Increment(ref m_iTokenCounter);
-
-            //Let the thread spin until it's is own turn
-            while (true)
-            {                
-                if (Interlocked.CompareExchange(ref iThreadToken, m_iServedToken + 1, m_iServedToken) != iThreadToken)
-                {
-                    hAction.Invoke();
-                    m_iServedToken = iThreadToken;
-                    break;
-                }
-            }            
-        }
-
 
         public void Enqueue(T item)
         {

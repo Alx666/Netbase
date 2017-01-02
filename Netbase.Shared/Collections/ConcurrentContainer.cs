@@ -9,7 +9,7 @@ namespace Netbase.Shared.Collections
     public abstract class ConcurrentContainer
     {
         private int m_iTokenCounter;
-        private int m_iServedToken;
+        private volatile int m_iServedToken;
 
         public ConcurrentContainer()
         {

@@ -11,7 +11,7 @@ namespace Netbase.Shared.Collections
     public class ConcurrentQueue<T>
     {
         private Queue<T> m_hQueue;
-        private int m_iTokenCounter = int.MaxValue;
+        private int m_iTokenCounter;
         private int m_iServedToken;
 
         public ConcurrentQueue()
@@ -25,7 +25,7 @@ namespace Netbase.Shared.Collections
             //Get an access token
             int iThreadToken = Interlocked.Increment(ref m_iTokenCounter);
 
-            //Let the thread spin until 
+            //Let the thread spin until it's is own turn
             while (true)
             {                
                 if (Interlocked.CompareExchange(ref iThreadToken, m_iServedToken + 1, m_iServedToken) != iThreadToken)
@@ -42,7 +42,6 @@ namespace Netbase.Shared.Collections
         {
             this.SpinWaitFor(() => { m_hQueue.Enqueue(item); });
         }
-
 
         public bool TryDequeue(out T result)
         {

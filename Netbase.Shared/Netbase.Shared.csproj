@@ -41,6 +41,7 @@
     <Compile Include="Attributes\DataContract.cs" />
     <Compile Include="Attributes\RpcType.cs" />
     <Compile Include="Attributes\ServiceOperation.cs" />
+    <Compile Include="Collections\ConcurrentQueue.cs" />
     <Compile Include="Deprecated\TypeLoader.cs" />
     <Compile Include="Attributes\ServiceContract.cs" />
     <Compile Include="Interfaces\IService.cs" />
